@@ -2,7 +2,7 @@ const Joi = require("joi");
 
 const registerValidation = async (req, res, next) => {
   const userSchema = Joi.object().keys({
-    firstName: Joi.string().required().messages({
+    name: Joi.string().required().messages({
       "string.empty": "Il campo nome non può essere vuoto.",
       "any.required": "Il campo nome è obbligatorio.",
     }),
@@ -23,7 +23,7 @@ const registerValidation = async (req, res, next) => {
       "string.min": "La password deve contenere almeno 6 caratteri.",
       "any.required": "Il campo password è obbligatorio.",
     }),
-    confirmPassword: Joi.string()
+    confirmPw: Joi.string()
       .required()
       .custom((value, helpers) => {
         const { password } = helpers.state.ancestors[0];
@@ -46,12 +46,18 @@ const registerValidation = async (req, res, next) => {
   });
 
   try {
-    const user = await userSchema.validateAsync(req.body);
+    const user = await userSchema.validateAsync(req.body, {
+      abortEarly: false,
+    });
     req.user = user;
 
     return next();
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    const errorMessage = error?.details
+      .map((err) => `● ${err.message}`)
+      .join("\n");
+
+    return res.status(400).json({ message: errorMessage });
   }
 };
 
