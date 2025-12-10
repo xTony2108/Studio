@@ -7,16 +7,16 @@ const loginController = async (req, res) => {
 
   try {
     const user = await User.findOne(
-      { email },
-      "firstName lastName role email password",
+      { email: email.toLowerCase() },
+      "name lastName role email password",
       {
         lean: true,
       }
     );
 
-    const { firstName, lastName, role, password: crypted } = user;
-
     if (!user) return res.status(400).json({ message: "Credenziali errate" });
+
+    const { name, lastName, role, password: crypted } = user;
 
     const comparePassword = await bcrypt.compare(password, crypted);
 
@@ -27,12 +27,12 @@ const loginController = async (req, res) => {
 
     const expiration = new Date(Date.now() + 15 * 60 * 1000).getTime();
 
-    const accessToken = jwt.sign({ firstName, lastName, role }, JWT_SECRET, {
+    const accessToken = jwt.sign({ name, lastName, role }, JWT_SECRET, {
       expiresIn: expiration,
     });
 
     const refreshToken = jwt.sign(
-      { firstName, lastName, role },
+      { name, lastName, role },
       JWT_SECRET_REFRESH,
       {
         expiresIn: "30d",

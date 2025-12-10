@@ -2,19 +2,19 @@ const bcrypt = require("bcrypt");
 const { User } = require("../../db");
 
 const registerController = async (req, res) => {
-  const { firstName, lastName, email, password } = req.user;
+  const { name, lastName, email, password } = req.user;
 
   try {
-    const emailExists = await User.exists({ email });
+    const emailExists = await User.exists({ email: email.toLowerCase() });
 
     if (emailExists)
       return res.status(400).json({ message: "Email già registrata!" });
 
     const cryptedPW = await bcrypt.hash(password, 12);
     await User.create({
-      firstName,
+      name,
       lastName,
-      email,
+      email: email.toLowerCase(),
       password: cryptedPW,
       role: "user",
     });

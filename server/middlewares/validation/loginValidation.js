@@ -15,15 +15,22 @@ const loginValidation = async (req, res, next) => {
       "string.min": "La password deve contenere almeno 6 caratteri.",
       "any.required": "Il campo password è obbligatorio.",
     }),
+    remember: Joi.boolean(),
   });
 
   try {
-    const user = await userSchema.validateAsync(req.body);
+    const user = await userSchema.validateAsync(req.body, {
+      abortEarly: false,
+    });
     req.user = user;
 
     return next();
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    const errorMessage = error?.details
+      .map((err) => `● ${err.message}`)
+      .join("\n");
+
+    return res.status(400).json({ message: errorMessage });
   }
 };
 

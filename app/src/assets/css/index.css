@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+* {
+  font-family: "Merriweather Sans";
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+h2 {
+  font-size: 3rem;
+  font-weight: bold;
+  @apply max-md:text-4xl max-sm:text-3xl;
+}
+
+section {
+  padding: 10rem 0;
+  @apply max-xl:max-w-4xl max-lg:min-h-0 max-lg:max-w-3xl max-md:max-w-xl max-sm:max-w-lg min-sm:m-auto max-lg:py-20 max-sm:px-6;
+}
+
+.menu {
+  color: transparent;
+
+  &::after,
+  &::before {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 0;
+    height: 2px;
+    width: 22px;
+    background-color: white;
+    transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1), width 0.5s ease;
+    will-change: transform;
+  }
+
+  &::after {
+    transform: translateY(10px);
+  }
+
+  &&::before {
+    transform: translateY(-10px);
+  }
+
+  &.active::before {
+    transform: rotate(45deg) translateY(0);
+    top: 0;
+    bottom: 0;
+    width: 32px;
+    left: 0;
+  }
+
+  &.active::after {
+    transform: rotate(-45deg) translateY(0);
+    top: 0;
+    bottom: 0;
+    width: 32px;
+  }
+}
+
+.line-center {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform-origin: left;
+  will-change: opacity;
+
+  &.hide-line {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+@theme {
+  /*--color-base: #333333;*/
+  --color-primary: #b9bdae;
+  --color-secondary: #1565c0;
+  --color-tertiary: #757575;
+  --drop-shadow-primary: 4px 4px 4px rgba(0, 0, 0, 1);
+}
